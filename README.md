@@ -2,7 +2,7 @@
 
 ## [70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)
 - Recursive 解法
-```cpp=
+```cpp
 class Solution {
 public:
     int climbStairs(int n) {
@@ -21,7 +21,7 @@ public:
 ```
 - Top Down 解法
 Top Down 其實就是 **Recursive** + **Memoization**
-```cpp=
+```cpp
 class Solution {
 public:
     int climbStairs(int n) {
@@ -45,7 +45,7 @@ public:
 };
 ```
 - Bottom Up 解法
-```cpp=
+```cpp
 class Solution {
 public:
     int climbStairs(int n) {
