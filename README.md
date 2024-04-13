@@ -1,6 +1,21 @@
 # DP問題整理
+<!-- TOC -->
 
-## [70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)
+- [DP問題整理](#dp%E5%95%8F%E9%A1%8C%E6%95%B4%E7%90%86)
+    - [入門DP](#%E5%85%A5%E9%96%80dp)
+        - [70. Climbing Stairs](#70-climbing-stairs)
+    - [進階DP](#%E9%80%B2%E9%9A%8Edp)
+        - [714. Best Time to Buy and Sell Stock with Transaction Fee](#714-best-time-to-buy-and-sell-stock-with-transaction-fee)
+
+<!-- /TOC -->
+
+
+
+
+
+## 入門DP
+
+### [70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)
 - Recursive 解法
 ```cpp
 class Solution {
@@ -58,6 +73,73 @@ public:
             dp[i] = dp[i-2]+dp[i-1];
         }
         return dp[n];
+    }
+};
+```
+
+## 進階DP
+
+### [714. Best Time to Buy and Sell Stock with Transaction Fee](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/?envType=study-plan-v2&envId=leetcode-75)
+- Recursive 解法
+```cpp
+class Solution {
+public:
+    int solve(vector<int>& prices, int fee, int index, bool hold, int buy_price){
+        if(index==prices.size()-1){
+            if(!hold){
+                return 0;
+            }
+            else{
+                return prices[index]-buy_price;
+            }
+        }
+        if(!hold){
+            int buyAtToday = -fee+solve(prices, fee, index+1, 1, prices[index]);
+            int skipToday = solve(prices, fee, index+1, 0, INT_MAX);
+            return max(buyAtToday, skipToday);
+        }
+        else{
+            int sellAtToday = prices[index]-buy_price+solve(prices, fee, index+1, 0, INT_MAX);
+            int skipToday = solve(prices, fee, index+1, 1, buy_price);
+            return max(sellAtToday, skipToday);
+        }
+    }
+    int maxProfit(vector<int>& prices, int fee) {
+        bool hold = 0;
+        return solve(prices, fee, 0, hold, 0);
+    }
+};
+```
+
+- Top Down解法
+```cpp
+class Solution {
+public:
+    int solve(vector<int>& prices, int fee, int index, vector<vector<int>> &memo, int hold){
+        if(index==prices.size()){
+            return 0;
+        }
+        if(memo[hold][index]!=INT_MIN){
+            return memo[hold][index];
+        }
+        int profit;
+        if(hold){
+            int keepHolding = solve(prices, fee, index+1, memo, 1);
+            int SellAtToday = prices[index]-fee+solve(prices, fee, index+1, memo, 0);
+            profit = max(keepHolding, SellAtToday);
+        }
+        else{
+            int keepNoAction = solve(prices, fee, index+1, memo, 0);
+            int buyAtToday = -prices[index]+solve(prices, fee, index+1, memo, 1);
+            profit = max(keepNoAction, buyAtToday);
+        }
+        //printf("profit=%d\n", profit);
+        return memo[hold][index] = profit;
+    }
+    int maxProfit(vector<int>& prices, int fee) {
+        int n = prices.size();
+        vector<vector<int>> memo(2, vector<int>(n, INT_MIN));
+        return solve(prices, fee, 0, memo, 0);
     }
 };
 ```
